@@ -9,10 +9,10 @@ const ScoutDashboard = () => {
   const { userInfo } = useSelector((store) => store.auth);
 
   useEffect(() => {
-    if (userInfo && !userInfo?.isScout) {
+    if (!userInfo?.isScout) {
       navigate("/scout/apply");
     }
-  }, [userInfo?.isScout, userInfo]);
+  }, [userInfo?.isScout]);
 
   if (userInfo?.scoutStatus === "applied") {
     return <Success />;

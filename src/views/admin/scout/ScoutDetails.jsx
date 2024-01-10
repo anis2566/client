@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
 import {
@@ -10,14 +10,25 @@ import {
   ListItemIcon,
   Divider,
   Chip,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 import BreadCumb from "../../../components/BreadCumb";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getScout } from "../../../store/reducers/scout";
-import { Check } from "@mui/icons-material";
+import {
+  clearMsg,
+  getScout,
+  updateStatus,
+} from "../../../store/reducers/scout";
+import { Check, Send } from "@mui/icons-material";
 import PuffLoader from "react-spinners/PuffLoader";
+import { scoutStatus } from "../../../utills";
+import { LoadingButton } from "@mui/lab";
+import toast from "react-hot-toast";
 
 // BREADCUMD DATA
 const data = [
@@ -36,6 +47,8 @@ const data = [
 ];
 
 const ScoutDetails = () => {
+  const [status, setStatus] = useState("applied");
+
   const { scoutId } = useParams();
   const dispatch = useDispatch();
 
@@ -68,7 +81,30 @@ const ScoutDetails = () => {
     dispatch(getScout(scoutId));
   }, [scoutId]);
 
-  const { scout, loading } = useSelector((store) => store.scout);
+  const { scout, loading, loadingStatus, successMsg, errorMsg } = useSelector(
+    (store) => store.scout
+  );
+
+  // HANDLE SUBMIT
+  const handleSubmit = () => {
+    if (!status) {
+      toast.error("Please select status");
+    } else {
+      dispatch(updateStatus({ status, scoutId }));
+    }
+  };
+
+  // SHOW TOAST MESSAGE
+  useEffect(() => {
+    if (errorMsg) {
+      toast.error(errorMsg);
+      dispatch(clearMsg());
+    }
+    if (successMsg) {
+      toast.success(successMsg);
+      dispatch(clearMsg());
+    }
+  }, [errorMsg, successMsg]);
 
   return (
     <Box>
@@ -344,20 +380,9 @@ const ScoutDetails = () => {
                     </ListItemIcon>
                     <Typography fontSize={18} fontWeight={700}>
                       Scout Unit:{" "}
-                      {/* <Typography component="span" fontWeight={500}>
-                    {scout?.scoutRole && capitalizeWords(scout?.scoutRole)}
-                  </Typography> */}
-                    </Typography>
-                  </ListItem>
-                  <ListItem sx={{ padding: "3px 5px" }}>
-                    <ListItemIcon>
-                      <Check />
-                    </ListItemIcon>
-                    <Typography fontSize={18} fontWeight={700}>
-                      Scout Group:{" "}
-                      {/* <Typography component="span" fontWeight={500}>
-                    {scout?.scoutRole && capitalizeWords(scout?.scoutRole)}
-                  </Typography> */}
+                      <Typography component="span" fontWeight={500}>
+                        {scout?.unit}
+                      </Typography>
                     </Typography>
                   </ListItem>
                   <ListItem sx={{ padding: "3px 5px" }}>
@@ -528,6 +553,39 @@ const ScoutDetails = () => {
                     </Typography>
                   </ListItem>
                 </List>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Divider sx={{ my: 2 }}>
+                <Chip variant="contained" color="info" label="Action" />
+              </Divider>
+
+              <Box display="flex" flexDirection="column">
+                <FormControl sx={{ minWidth: "150px" }}>
+                  <FormLabel>Scout Status</FormLabel>
+                  <Select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    {scoutStatus.map((status, i) => (
+                      <MenuItem value={status.value} key={i}>
+                        {status.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <LoadingButton
+                  loading={loadingStatus}
+                  loadingPosition="start"
+                  startIcon={<Send />}
+                  variant="contained"
+                  color="warning"
+                  sx={{ mt: 2 }}
+                  type="submit"
+                  onClick={handleSubmit}
+                >
+                  Update
+                </LoadingButton>
               </Box>
             </Grid>
           </Grid>

@@ -6,6 +6,9 @@ import ScoutDetails from "../../views/admin/scout/ScoutDetails";
 import ScoutList from "../../views/admin/scout/ScoutList";
 import VerifiedScouts from "../../views/admin/scout/VerifiedScouts";
 import Unit from "./../../views/admin/unit";
+import CreateEvent from "./../../views/admin/event/CreateEvent";
+import EventList from "./../../views/admin/event/EventList";
+import EventDetails from "./../../views/admin/event/EventDetails";
 
 const adminRoutes = [
   {
@@ -46,6 +49,21 @@ const adminRoutes = [
   {
     path: "admin/scout/unit",
     element: <Unit />,
+    role: "admin",
+  },
+  {
+    path: "admin/event/create",
+    element: <CreateEvent />,
+    role: "admin",
+  },
+  {
+    path: "admin/event/list",
+    element: <EventList />,
+    role: "admin",
+  },
+  {
+    path: "admin/event/:eventId",
+    element: <EventDetails />,
     role: "admin",
   },
 ];

@@ -222,3 +222,18 @@ export const regions = [
     value: "air",
   },
 ];
+
+export const scoutStatus = [
+  {
+    label: "Applied",
+    value: "applied",
+  },
+  {
+    label: "Active",
+    value: "active",
+  },
+  {
+    label: "Cancelled",
+    value: "cancelled",
+  },
+];

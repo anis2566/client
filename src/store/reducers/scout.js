@@ -105,10 +105,26 @@ export const getScoutByUserId = createAsyncThunk(
   }
 );
 
+// UPDATE SCOUT STATUS
+export const updateStatus = createAsyncThunk(
+  "scout/update-status",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.put(`/scout/update/${payload.scoutId}`, {
+        status: payload.status,
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const scoutSlice = createSlice({
   name: "scout",
   initialState: {
     loading: false,
+    loadingStatus: false,
     successMsg: "",
     errorMsg: "",
     scouts: [],
@@ -196,6 +212,16 @@ const scoutSlice = createSlice({
     });
     builder.addCase(getScoutByUserId.rejected, (state) => {
       state.loading = false;
+    });
+    builder.addCase(updateStatus.pending, (state) => {
+      state.loadingStatus = true;
+    });
+    builder.addCase(updateStatus.fulfilled, (state, action) => {
+      state.loadingStatus = false;
+      state.successMsg = action.payload.message;
+    });
+    builder.addCase(updateStatus.rejected, (state) => {
+      state.loadingStatus = false;
     });
   },
 });

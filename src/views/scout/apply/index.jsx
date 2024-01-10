@@ -18,7 +18,7 @@ import Photo from "./Photo";
 const steps = ["Personal Info", "Address", "Scout Info", "Photo"];
 
 const Apply = () => {
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
 
   const navigate = useNavigate();
 

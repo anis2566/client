@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import PuffLoader from "react-spinners/PuffLoader";
 
 import {
   Avatar,
@@ -18,13 +21,11 @@ import {
   Pagination,
   IconButton,
 } from "@mui/material";
-import BreadCumb from "../../../components/BreadCumb";
-import { useDispatch, useSelector } from "react-redux";
-import { getCancelledScouts } from "../../../store/reducers/scout";
-import PuffLoader from "react-spinners/PuffLoader";
 import { grey } from "@mui/material/colors";
-import { Edit, Visibility } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { Visibility } from "@mui/icons-material";
+
+import BreadCumb from "../../../components/BreadCumb";
+import { getCancelledScouts } from "../../../store/reducers/scout";
 
 // BREADCUMD DATA
 const data = [
@@ -184,23 +185,24 @@ const CancelledScouts = () => {
                         {scout?.nameEnglish}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        {capitalizeWords(scout?.scoutGroup)}
+                        {scout?.scoutGroup &&
+                          capitalizeWords(scout?.scoutGroup)}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
                         {capitalizeWords(scout?.phone)}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
                         <Chip
-                          label={capitalizeWords(scout?.scoutSectionType)}
+                          label={
+                            scout?.scoutSectionType &&
+                            capitalizeWords(scout?.scoutSectionType)
+                          }
                           color="success"
                           size="small"
                         />
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
                         <Box display="flex" justifyContent="center">
-                          <IconButton size="small">
-                            <Edit fontSize="small" color="warning" />
-                          </IconButton>
                           <IconButton
                             size="small"
                             onClick={() =>

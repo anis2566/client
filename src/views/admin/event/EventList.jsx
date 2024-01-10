@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import PuffLoader from "react-spinners/PuffLoader";
+import dayjs from "dayjs";
 
 import {
-  Avatar,
   Box,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
+  Pagination,
   Select,
   Table,
   TableBody,
@@ -16,16 +15,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
-  Chip,
-  Pagination,
-  IconButton,
+  Typography,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { Visibility } from "@mui/icons-material";
 
-import BreadCumb from "../../../components/BreadCumb";
-import { getVerifiedScouts } from "../../../store/reducers/scout";
+import BreadCumb from "./../../../components/BreadCumb";
+import { useDispatch, useSelector } from "react-redux";
+import { getEvents } from "../../../store/reducers/event";
+import { grey } from "@mui/material/colors";
+import { Edit, Visibility } from "@mui/icons-material";
+import { PuffLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 // BREADCUMD DATA
 const data = [
@@ -34,57 +33,38 @@ const data = [
     path: "/admin/dashboard",
   },
   {
-    label: "Scout Verified",
-    path: "/admin/scout/verified",
+    label: "Events",
+    path: "/admin/event/list",
   },
 ];
 
-const VerifiedScouts = () => {
+const EventList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  const [name, setName] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleNavigate = (path) => {
-    navigate(path);
-  };
-
-  function capitalizeWords(str) {
-    return str
-      .replace(/([a-z])([A-Z])/g, "$1 $2")
-      .replace(/\b\w/g, function (firstLetter) {
-        return firstLetter.toUpperCase();
-      });
-  }
-
+  // GET EVENTS
   useEffect(() => {
-    dispatch(getVerifiedScouts({ page, perPage, name }));
-  }, [page, perPage, name]);
+    dispatch(getEvents({ page, perPage }));
+  }, [page, perPage]);
 
-  const { loading, scouts, totalScout } = useSelector((store) => store.scout);
+  const { loading, events, totalEvent } = useSelector((state) => state.event);
 
   return (
     <Box>
       <BreadCumb data={data} />
-      <Box bgcolor="#fff" mt={2} p={2}>
+
+      <Box bgcolor="#fff" p={2} mt={2}>
         {/* HEADER */}
         <Box
           display="flex"
-          justifyContent="space-between"
+          justifyContent="flex-end"
           alignItems="center"
-          gap={{ xs: 1 }}
           bgcolor="#fff"
           mb={1}
         >
-          <TextField
-            label="Name"
-            type="text"
-            size="small"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
           <FormControl sx={{ minWidth: "80px" }}>
             <InputLabel id="demo-simple-select-label">Per Page</InputLabel>
             <Select
@@ -109,11 +89,11 @@ const VerifiedScouts = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="30vh"
+            minHeight={325}
           >
             <PuffLoader
-              color={"green"}
-              loading={loading}
+              color="green"
+              loading={true}
               size={50}
               aria-label="Loading Spinner"
               data-testid="loader"
@@ -134,31 +114,19 @@ const VerifiedScouts = () => {
                     align="center"
                     sx={{ fontWeight: "bold", padding: { xs: "10px 2px" } }}
                   >
-                    Image
+                    Title
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ fontWeight: "bold", padding: { xs: "10px 2px" } }}
                   >
-                    Name
+                    Event Date
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ fontWeight: "bold", padding: { xs: "10px 2px" } }}
                   >
-                    Scout Group
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ fontWeight: "bold", padding: { xs: "10px 2px" } }}
-                  >
-                    Mobile
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ fontWeight: "bold", padding: { xs: "10px 2px" } }}
-                  >
-                    Section
+                    Participants
                   </TableCell>
                   <TableCell
                     align="center"
@@ -169,44 +137,31 @@ const VerifiedScouts = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {scouts &&
-                  scouts.map((scout, i) => (
+                {events &&
+                  events.map((event, i) => (
                     <TableRow key={i}>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
                         {i + 1}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        <Avatar
-                          src={scout?.image?.secure_url}
-                          alt={scout?.nameEnglish}
-                        />
+                        {event?.title}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        {scout?.nameEnglish}
+                        {dayjs(event?.eventStart).format("DD-MM-YYYY")} -{" "}
+                        {dayjs(event?.eventEnd).format("DD-MM-YYYY")}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        {scout?.scoutGroup &&
-                          capitalizeWords(scout?.scoutGroup)}
-                      </TableCell>
-                      <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        {scout?.phone}
-                      </TableCell>
-                      <TableCell align="center" sx={{ padding: "10px 2px" }}>
-                        <Chip
-                          label={
-                            scout?.scoutSectionType &&
-                            capitalizeWords(scout?.scoutSectionType)
-                          }
-                          color="success"
-                          size="small"
-                        />
+                        {event?.participants?.length}
                       </TableCell>
                       <TableCell align="center" sx={{ padding: "10px 2px" }}>
                         <Box display="flex" justifyContent="center">
+                          <IconButton size="small">
+                            <Edit fontSize="small" color="warning" />
+                          </IconButton>
                           <IconButton
                             size="small"
                             onClick={() =>
-                              handleNavigate(`/admin/scout/${scout?._id}`)
+                              navigate(`/admin/event/${event?._id}`)
                             }
                           >
                             <Visibility fontSize="small" color="info" />
@@ -219,12 +174,26 @@ const VerifiedScouts = () => {
             </Table>
           </TableContainer>
         )}
+        {/* NOT FOUND */}
+        {totalEvent === 0 && !loading ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="20vh"
+          >
+            <Typography fontSize={20} fontWeight={700} color={grey[600]}>
+              Event Not Found
+            </Typography>
+          </Box>
+        ) : null}
 
         {/* PAGINATION */}
         <Box mt={2} display="flex" justifyContent="flex-end">
           <Pagination
             color="primary"
-            count={Math.ceil(totalScout / perPage)}
+            count={Math.ceil(totalEvent / perPage)}
             page={page}
             onChange={(e, v) => setPage(v)}
           />
@@ -234,4 +203,4 @@ const VerifiedScouts = () => {
   );
 };
 
-export default VerifiedScouts;
+export default EventList;

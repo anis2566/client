@@ -21,6 +21,7 @@ import {
   DoDisturb,
   VerifiedUserOutlined,
   AcUnit,
+  EventNote,
 } from "@mui/icons-material";
 
 export const allNav = [
@@ -70,6 +71,24 @@ export const allNav = [
     icon: <AcUnit sx={{ color: "#0288D1" }} />,
     role: "admin",
     path: "/admin/scout/unit",
+  },
+  {
+    id: 4,
+    title: "Event",
+    icon: <EventNote sx={{ color: "#0288D1" }} />,
+    role: "admin",
+    children: [
+      {
+        title: "Create",
+        icon: <Create color="warning" fontSize="small" />,
+        path: "/admin/event/create",
+      },
+      {
+        title: "List",
+        icon: <List color="warning" fontSize="small" />,
+        path: "/admin/event/list",
+      },
+    ],
   },
 
   // Scouts Navs
